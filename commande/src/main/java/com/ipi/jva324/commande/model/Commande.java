@@ -18,8 +18,6 @@ public class Commande {
 
     private String status;
 
-
-    /** cache pour faciliter la modification à la volée par l'utilisateur de la quantité */
     private long quantiteDisponibleStockConnu = 1000;
 
 

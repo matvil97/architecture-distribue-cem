@@ -27,7 +27,6 @@ Le but des exercices (TD en séance et TP évalués) est de faire évoluer cette
             - erreur ne trouve pas le symbol "java" : clic droit sur pom.xml > Build > sur Setup DSK choisir Configure > choisir Download et install (par exemple de la JDK Eclipse Temurin)
             - "Error running..." : Project JDK is not specified > Configure... > no SDK > Add SDK > Download
             - erreur "Cannot find JRE" : File > Project Structure (ou clic droit dans l'arborescence sur la racine d'un projet Maven), et de là dans Platform Settings > SDKs faire + > Download JDK (ou bien dans Project Settings > Project faire Add SDK > Download SDK)
-            - Pour mettre à jour Java : File > Project Structure puis SDKs puis Download...
         - lancer un build maven complet : Run > Edit configurations > Maven > Create configuration > mettre Working directory au dossier du projet et dans Command line, écrire : clean install
         - problème de sécurisation de connexion car proxy :
           - unable to access 'https://github.com/mdutoo/ipi-jva350-tptd.git/': SSL certificate problem: unable to get local issuer certificate
@@ -55,7 +54,6 @@ Le but des exercices (TD en séance et TP évalués) est de faire évoluer cette
           NB. par contre, configurer cafile dans ./npmrc ne marche pas car https obligé depuis October 4, 2021 comme le disent les logs
 
     - sinon Eclipse : voir https://thierry-leriche-dessirier.developpez.com/tutoriels/java/importer-projet-maven-dans-eclipse-5-min/
-      - mettre à jour java : télécharger la dernière distribution OpenJDK par exemple d'Eclipse (Temurin) à https://www.adoptium.net , puis le sélectionner comme défaut dans Windows > Preferences, puis si nécesssaire le mettre à jour
 - Avoir installé postgresql (ou mysql) : https://www.postgresql.org/download/
 
 ## Créer la base de données
@@ -95,9 +93,9 @@ Configurer l'application pour s'en servir : dans ```main/resources/application.p
 
 ### Directement en Java :
 
-D'abord (et après tout changement d'interface utilisateur React.js) lancer une compilation complète : ```mvn install-DskipTests```
+D'abord (et après tout changement d'interface utilisateur React.js) lancer une compilation complète : ```mvn clean install-DskipTests```
 
-lancer la classe com.ipi.jva324.Jva324Application
+lancer la classe com.ipi.jva324.StockApplication
 - dans l'IDE
     - IntelliJ : l'ouvrir et cliquer sur la flèche verte sur sa gauche
     - Eclipse : clic droit > Run as application),
@@ -148,9 +146,11 @@ Forker ce repository Github dans votre propre compte Github. Après chaque quest
 
 ### Extraction du microservice "stock" - refactoring de l'appel en REST HAL
 
+TODO NON [TD] (à ne faire que s'il n'existe pas encore) Copiez le module Maven d'origine vers 1 module "commande". Adaptez sa configuration de build (pom.xml) en conséquence, et branchez-la dans le pom. xml racine. Vérifiez que tests et IHM fonctionnent toujours pareil. Committez et pushez, et faites-le dans toutes les questions suivantes.
+
 [TD] Quelle est la partie la plus importante de commandeService.createCommande() ? En écrire un test unitaire.
 
-[TD] Rendez flexible l'appel de getProduit() fait dans commandeService.createCommande(), en développant une interface ...commande.service.CommandeProduitService qui comporte cette seule méthode et en l'implémentant dans un nouveau composant Spring (annoté @Component) de classe ...commande.service.CommandeProduitServiceLocalImpl qui utilise (injecté à l'aide d'@Autowired) ProduitService. Vérifiez que test et IHM marchent toujours.
+[TD] Rendez flexible l'appel de getProduit() par commandeService.createCommande(), en développant une interface ...commande.service.CommandeProduitService avec cette seule méthode et en l'implémentant dans un nouveau composant Spring (annoté @Component) de classe ...commande.service.CommandeProduitServiceLocalImpl qui utilise (injecté à l'aide d'@Autowired) ProduitService. Vérifiez que test et IHM marchent toujours.
 
 [TD] Communication - exposition des produits en HAL : dans le module commande, activez Spring Data REST sur le chemin /api/data-rest  (voir cours).
 
@@ -159,12 +159,12 @@ Forker ce repository Github dans votre propre compte Github. Après chaque quest
 [TD] Quel problème apparaît en essayant de le faire marcher (démarrage test ou IHM), pourquoi ? Pour le résoudre, pour l'instant commentez l'annotation en tête de CommandeProduitLocalImpl. Vérifiez que tests et IHM marchent toujours.
 
 [TD] Ecrivez dans une classe CommandeProduitServiceRestHalImplIntegrationTest un test d'intégration de CommandeProduitServiceRESTHALImpl, le plus simple possible (test de son appel distant).
-
+    
 [TD] Déplacez CommandeProduitServiceLocalImpl dans le dossier de sources "test" (plutôt que "main"). Faites en sorte que son test marche toujours. Pour cela, définissez son instanciation (aide: comme celle de RestTemplate, voir le cours...) dans une classe TestLocalConfiguration annotée @Configuration utilisée dans le test en annotant ce dernier @Import(TestLocalConfiguration). TODO cours
 
 [TD] BONUS Ecrivez une version mockée du test existant de commandeService.createCommande().
 
-[TD] Sortez la partie http://hôte:port de l'URL en propriété de configuration dans application.properties (injectée dans une variable de classe en l'annotant par @Value("ma.prop:valeurPardéfaut")), utilisez-la à la place dans CommandeProduitRESTHALImpl.
+[TD] Sortez la partie http://hôte:port de l'URL en propriétés de configuration, TODO utilisez-la à la place dans CommandeProduitRESTHALImpl.
 
 [TP] faire pareil que dans CommandeService.createCommande() mais dans CommandeService.validateCommande(), afin de finir de ne plus utiliser ProduitService directement dans CommandeService.
 
@@ -172,7 +172,7 @@ Forker ce repository Github dans votre propre compte Github. Après chaque quest
 
 [TD] Copiez le module Maven d'origine vers un module "stock". Adaptez sa configuration de build (pom.xml) en conséquence, et branchez-la dans le pom. xml racine.
 - Développez dans ce module stock un test unitaire de la SEULE partie stock (dans com.ipi.jva324.stock) qui vérifie un bon usage nominal de manière simple (sans la partie ReceptionDeProduit), vérifiez qu'il marche.
-- Supprimez du module stock tout le code Java de la partie commande, et renommez et déplacez la classe de démarrage Spring Boot en com.ipi.jva324.stock.StockApplication. Vérifiez que le nouveau test unitaire marche toujours.
+  - Supprimez du module stock tout le code Java de la partie commande, et renommez et déplacez la classe de démarrage Spring Boot en com.ipi.jva324.stock.StockApplication. Vérifiez que le nouveau test unitaire marche toujours.
 - Lancez le microservice Stock ainsi créé à l'aide de cette classe. Dans l'IHM qu'il sert, qu'est-ce qui marche encore et qu'est-ce qui ne marche plus, pourquoi ? Quelle est la solution classique, du point de vue web (C) ? du point de vue micro-services (G) ?
 
 NB. En temps normal, chaque microservice serait dans son propre repository Github vu qu'il est géré par une équipe de développement différente (à moins d'une politique "monorepo" dans l'entreprise). Tous sont ici dans le même repository (et de builds raccrochés dans un pom.xml racine) uniquement pour simplifier la gestion des exercices.
@@ -184,7 +184,9 @@ NB. En temps normal, chaque microservice serait dans son propre repository Githu
 - Ensuite, sur le modèle de CommandeProduitServiceRestHalImpl, développer CommandeProduitServiceRestImpl qui appelle cette nouvelle StockApi et non plus l'API automatiquement exposée au format REST HAL par Spring Data Rest.
 - Faites-en un test d'intégration CommandeProduitServiceRestImplIntegrationTest sur le modèle de celui fait en TD dans CommandeProduitServiceRestHalImplIntegrationTest. Utilisez la même solution (@Import(TestRestConfiguration)) pour le faire marcher en parallèle des autres.
 
-[TP] BONUS adaptez l'IHM de stock pour qu'elle s'en serve, voire développez le début d'une version Thymeleaf de l'IHM (par exemple une simple liste de produits).
+[TD] BONUS si vous êtes en avance, adaptez l'IHM de stock pour qu'elle s'en serve, voire commencez à développer une version Thymeleaf de l'IHM (par exemple une simple liste de produits).
+
+TODO cours test API REST locale / fournie
 
 [TD] Développez dans le module commande un composant Spring (annoté @Component) CommandeProduitServiceRESTImpl implémentant l'interface CommandeProduitService à l'aide de RESTTemplate appelant cette nouvelle API /api/produits de stock. Ecrivez un test d'intégration de CommandeService.createCommande() qui s'en sert TODO @...
 

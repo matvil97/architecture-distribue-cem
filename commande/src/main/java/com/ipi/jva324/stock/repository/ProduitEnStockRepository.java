@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Aussi auto expose en REST par Spring Data REST, appelé par CommandeService
+ * Aussi auto expose en REST par Spring Data REST, appelé par CommandeServiceImpl
  * ainsi :
  *
  * /produitEnStocks

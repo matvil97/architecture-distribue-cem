@@ -19,8 +19,8 @@
 	<modules>
 		<!-- module>discovery</module -->
 		<module>commande</module>
-		<!-- module>stock</module>
-		<module>gateway</module -->
+		<module>stock</module>
+		<!--		<module>gateway</module &ndash;&gt;-->
 	</modules>
 
 </project>
