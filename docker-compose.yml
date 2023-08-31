@@ -1,0 +1,26 @@
+version: '2'
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '15432:5432'
+    #volumes:
+    #  - db:/var/lib/postgresql/data
+  discovery-service:
+    container_name: discovery-service
+    build: ./discovery
+    ports:
+      - "8761:8761"
+  commande-service:
+    container_name: commande-service
+    build: ./commande
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
