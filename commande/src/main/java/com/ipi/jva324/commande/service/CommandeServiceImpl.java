@@ -30,6 +30,8 @@ public class CommandeServiceImpl {
 
     @Autowired
     private ProduitService produitService;
+    @Autowired
+    private CommandeProduitService commandeProduitService  ;
 
     /**
      * @param event
@@ -53,7 +55,7 @@ public class CommandeServiceImpl {
         commande.setStatus("created");
 
         logger.debug("createCommande produitId=" + commande.getProduitId());
-        ProduitEnStock produitEnStockFound = produitService.getProduit(commande.getProduitId());
+        ProduitEnStock produitEnStockFound = commandeProduitService.getProduit(commande.getProduitId());
         long quantiteDisponible = (produitEnStockFound == null) ? 0 : produitEnStockFound.getQuantiteDisponible();
         commande.setQuantiteDisponibleStockConnu(quantiteDisponible);
 
